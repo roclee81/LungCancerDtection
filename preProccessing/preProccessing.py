@@ -1,5 +1,5 @@
 #importing some libraries
-%matplotlib inline
+#%matplotlib inline
 
 import numpy as np
 import pandas as pd
@@ -11,13 +11,13 @@ import matplotlib.pyplot as plt
 from skimage import measure, morphology
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 
-INPUT_FOLDER = '../Projects/LungCancer/PatientData/sample_images'
+INPUT_FOLDER = '/Users/Odyssey/Projects/LungCancer/PatientData/sample_images/'
 patients = os.listdir(INPUT_FOLDER)
 patients.sort()
 
 #load scans in given folder path to INPUT_FOLDER
 def load_scan(path):
-    slices = [dicom.read_file(path + '/' + s) for s in oslistdir(path)]
+    slices = [dicom.read_file(path + '/' + s) for s in os.listdir(path)]
     slices.sort(key = lambda x: float(x.ImagePositionPatient[2]))
     try:
         slice_thickness = np.abs(slices[0].ImagePositionPatient[2] - slices[1].ImagePositionPatient[2])
@@ -51,4 +51,17 @@ def get_pixels_hu(slices):
         image[slice_number] += np.int16(intercept)
 
     return np.array(image, dtype=np.int16)
+
+#view one of the patients
+first_patient = load_scan(+INPUT_FOLDER  patients[0])
+first_patient_pixels = get_pixels_hu(first_patient)
+plt.hist(first_patient_pixels.flatten(), bins=80, color='C')
+plt.xlabel("Houfnfield Units (HU)")
+plt.ylabel("Frequency")
+plt.show()
+
+#show an slice in the middle
+plt.imshow(first_patient_pixels[80], cmap=plt.cm.gray)
+plt.show()
+
 
